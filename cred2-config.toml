@@ -1,0 +1,15 @@
+
+pin-threads=[17,18]
+blas-threads=1
+rest-api-port=8009
+input-channel="aeron:ipc"
+input-stream=1001
+
+output-channel="aeron:ipc"
+output-stream=1011
+
+
+
+[state]
+dark="/mnt/datadrive/DATA/CRED2-SCC/dark.fits"
+flat="/mnt/datadrive/DATA/CRED2-SCC/flat.fits"

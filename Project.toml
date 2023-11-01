@@ -1,0 +1,14 @@
+name = "ImgCalib"
+uuid = "275a48de-28e3-47cf-ba9f-48a334a7bbc4"
+
+[deps]
+Aeron = "42ac8a32-990f-4d8c-aece-52d731103226"
+FITSIO = "525bcba6-941b-5504-bd06-fd0dc1a4d2eb"
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Oxygen = "df9a0d86-3283-4920-82dc-4555fc0d1d8b"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+StructTypes = "856f2bd8-1eba-4b0a-8007-ebc267875bd4"
+SwaggerMarkdown = "1b6eb727-ad4b-44eb-9669-b9596a6e760f"
+TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+ThreadPinning = "811555cd-349b-4f26-b7bc-1f208b848042"

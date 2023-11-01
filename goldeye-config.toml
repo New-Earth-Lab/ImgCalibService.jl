@@ -1,0 +1,13 @@
+
+pin-threads=[23,24]
+blas-threads=1
+rest-api-port=8009
+input-channel="aeron:ipc"
+input-stream=1003
+
+output-channel="aeron:ipc"
+output-stream=1013
+
+[state]
+dark="/mnt/datadrive/DATA/Goldeye/dark.fits"
+flat="/mnt/datadrive/DATA/Goldeye/flat.fits"

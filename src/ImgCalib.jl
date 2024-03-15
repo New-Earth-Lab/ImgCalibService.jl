@@ -9,7 +9,10 @@ using SwaggerMarkdown
 using HTTP
 using StructTypes
 using LinearAlgebra
+using SpidersMessageEncoding
 
+# This is the old format
+# We'll receive in the old format and publish in the new format
 include("wire-format.jl")
 
 const DType = Float32
@@ -136,14 +139,10 @@ function loopmanager(
             @info "Publishing to aeron stream " aeron_output_stream_config
 
             # Set up our data to publish
-            pub_buffer = zeros(UInt8, length(first_message.buffer)*2)
-            pub_header = VenomsImageMessage(pub_buffer)
-            SizeX!(pub_header, SizeX(first_message))
-            SizeY!(pub_header, SizeY(first_message))
-            Format!(pub_header, 9) # Float32
-            MetadataLength!(pub_header, MetadataLength(first_message))
-            ImageBufferLength!(pub_header, ImageBufferLength(first_message)*2)
-            pub_data = Image(pub_header)
+            pub_buffer = zeros(UInt8, length(first_message.buffer)*2+16)
+            pub_msg = ArrayMessage{Float32,2}(pub_buffer)
+            arraydata!(pub_msg, img_scratch .* 0)
+            pub_data = arraydata(pub_msg)
 
             # Now that we've done all the set up work, enable GC logging so we can keep an eye on things
             GC.enable_logging()
@@ -162,17 +161,16 @@ function loopmanager(
 
                 # Apply flat correction and place into output data
                 pub_data .= img_scratch ./ state.flat
-
-                TimestampNs!(pub_header, TimestampNs(message))
+                pub_msg.header.TimestampNs = TimestampNs(message)
                 
                 # Publish corrected image
-                status = Aeron.publication_offer(publication, pub_header.buffer)
+                status = Aeron.publication_offer(publication, pub_buffer)
                 if status == :adminaction
-                    @warn lazy"could not publish wavefront measurement ($status)"
+                    @warn lazy"could not publish image ($status)"
                 elseif status == :backpressured
-                    @warn lazy"could not publish wavefront measurement ($status)"
+                    @warn lazy"could not publish image ($status)"
                 elseif status != :success && status != :backpressured && status != :notconnected
-                    error(lazy"could not publish wavefront sensor measurement ($status)")
+                    error(lazy"could not publish image ($status)")
                 end
 
             end

@@ -1,0 +1,53 @@
+[Install]
+WantedBy=multi-user.target
+
+
+[Unit]
+Description=SPIDERS LOWFS Calibration Service
+Requires=spiders-imgadaptor-lowfs.service
+
+[Service]
+Type=notify
+User=rtc
+Slice=rtc.slice
+WorkingDirectory=/opt/spiders/bin
+NotifyAccess=all
+Environment=SUB_CONTROL_URI='aeron:ipc'
+Environment=SUB_CONTROL_STREAM=701
+Environment=PUB_STATUS_URI='aeron:ipc'
+Environment=PUB_STATUS_STREAM=702
+Environment=SUB_DATA_URI_1='aeron:ipc'
+#Environment=SUB_DATA_URI_1='aeron:udp?endpoint=localhost:20121'
+Environment=SUB_DATA_STREAM_1=2013
+Environment=PUB_DATA_URI='aeron:ipc'
+Environment=PUB_DATA_STREAM=1013
+# Secondary publication: a decimated/averaged copy of the calibrated stream
+# for slow consumers such as the GUI. Defaults to a 30fps decimation (1/30s
+# minimum interval, zero retries on backpressure). The GUI can switch this
+# to averaging mode at runtime via a `decimated_averaging_frames` event on
+# SUB_CONTROL_STREAM (701).
+Environment=PUB_DATA_DECIMATED_URI='aeron:ipc'
+Environment=PUB_DATA_DECIMATED_STREAM=1113
+Environment=PUB_DATA_DECIMATED_MIN_INTERVAL_S=0.03333333
+Environment=PUB_DATA_DECIMATED_AVG_FRAMES=1
+Environment=JULIA_PROJECT=/opt/spiders/imgcalibservice/
+Environment=JULIA_NUM_THREADS=1,0
+Environment=OPENBLAS_NUM_THREADS=0
+AmbientCapabilities=CAP_IPC_LOCK
+LimitMEMLOCK=infinity
+AllowedCPUs=12
+CPUAffinity=12
+ExecStart=/opt/julia/bin/julia -e 'using ImgCalibService; ImgCalibService.main(ARGS)'
+ExecStartPost=/opt/julia/bin/julia --startup-file=no --project=/home/rtc/.julia/dev/SpidersMessageEncoding/app/ -e "using SpidersMessageSender; SpidersMessageSender.main(ARGS);" -- --dir /dev/shm/aeron-rtc/  --stream 701 --event dark=/mnt/datadrive/DATA/CRED2-LOWFS/dark.fits --event flat=/mnt/datadrive/DATA/CRED2-LOWFS/flat.fits --event Play
+NotifyAccess=all
+#CPUSchedulingPolicy=fifo
+#CPUSchedulingPriority=20
+#Environment=JULIA_PIN="affinitymask"
+#Environment=JULIA_NUM_THREADS=auto
+#Environment=OPENBLAS_NUM_THREADS=1
+#AllowedCPUs=8
+#CPUAffinity=8
+
+
+[Install]
+WantedBy=multi-user.target

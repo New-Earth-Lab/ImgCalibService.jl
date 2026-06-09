@@ -1,0 +1,33 @@
+# Build artifacts / compiled output
+build/
+*.o
+*.so
+*.dylib
+*.dll
+*.a
+
+# Julia
+deps/build.log
+*.cov
+*.jl.cov
+*.jl.mem
+
+# Large data / generated outputs (never commit)
+*.fits
+*.gif
+*.mat
+*.npy
+*.npz
+*.h5
+*.hdf5
+
+# Editor / OS junk
+.*.swp
+*~
+.DS_Store
+__pycache__/
+*.pyc
+
+# Vendored proprietary vendor SDK binaries/libs (do not commit)
+vendor/**/*.so
+vendor/**/*.a

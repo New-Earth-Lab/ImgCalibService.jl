@@ -1,0 +1,22 @@
+name = "ImgCalibService"
+uuid = "eca50586-2e02-4d32-bf7c-7ee16aa89aba"
+
+[deps]
+Aeron = "42ac8a32-990f-4d8c-aece-52d731103226"
+Hsm = "8e6e8f70-f28c-415d-b881-3282d03f8261"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+RTCBlock = "7cdd706b-019a-4a3b-a434-76f5582fd181"
+SimpleBinaryEncoding = "165d4630-7e21-4626-b3c2-016fbf5108c4"
+SpidersMessageEncoding = "25d647a0-ef7d-4da3-8ba8-11abaa3d526c"
+SpidersMessageSender = "1be38944-6f3b-4e31-8ac7-3d1d5d2dec34"
+StaticStrings = "4db0a0c5-418a-4e1d-8806-cb305fe13294"
+ThreadPinning = "811555cd-349b-4f26-b7bc-1f208b848042"
+
+[compat]
+Aeron = "2.0.0"
+Hsm = "0.2.1"
+RTCBlock = "0.1.0"
+SimpleBinaryEncoding = "3.0.0"
+SpidersMessageEncoding = "3.1.2"
+SpidersMessageSender = "0.1.0"

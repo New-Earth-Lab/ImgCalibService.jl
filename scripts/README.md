@@ -1,0 +1,1 @@
+This folder is used for scripts related to the low order wavefront sensor that are not part of the real time sensing / control loop.

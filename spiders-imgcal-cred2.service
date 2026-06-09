@@ -1,0 +1,40 @@
+[Unit]
+Description=SPIDERS CRED2 Image Calibration Service
+Requires=spiders-imgadaptor-cred2.service
+
+[Service]
+Type=notify
+User=rtc
+Slice=rtc.slice
+WorkingDirectory=/opt/spiders/bin
+NotifyAccess=all
+Environment=SUB_CONTROL_URI='aeron:ipc'
+Environment=SUB_CONTROL_STREAM=601
+Environment=PUB_STATUS_URI='aeron:ipc'
+Environment=PUB_STATUS_STREAM=602
+Environment=SUB_DATA_URI_1='aeron:ipc'
+Environment=SUB_DATA_STREAM_1=2011
+Environment=PUB_DATA_URI='aeron:ipc'
+Environment=PUB_DATA_STREAM=1011
+# Secondary publication: a decimated/averaged copy of the calibrated stream
+# for slow consumers such as the GUI. Defaults to a 30fps decimation (1/30s
+# minimum interval, zero retries on backpressure). The GUI can switch this
+# to averaging mode at runtime via a `decimated_averaging_frames` event on
+# SUB_CONTROL_STREAM (601).
+Environment=PUB_DATA_DECIMATED_URI='aeron:ipc'
+Environment=PUB_DATA_DECIMATED_STREAM=1111
+Environment=PUB_DATA_DECIMATED_MIN_INTERVAL_S=0.03333333
+Environment=PUB_DATA_DECIMATED_AVG_FRAMES=1
+Environment=JULIA_PROJECT=/opt/spiders/imgcalibservice/
+Environment=JULIA_NUM_THREADS=1
+Environment=OPENBLAS_NUM_THREADS=1
+AmbientCapabilities=CAP_IPC_LOCK
+LimitMEMLOCK=infinity
+AllowedCPUs=11
+CPUAffinity=11
+ExecStart='/opt/julia/bin/julia' -e "using ImgCalibService; ImgCalibService.main(ARGS)"
+ExecStartPost=/opt/julia/bin/julia --startup-file=no --project=/home/rtc/.julia/dev/SpidersMessageEncoding/app/ -e "using SpidersMessageSender; SpidersMessageSender.main(ARGS);" -- --dir /dev/shm/aeron-rtc/  --stream 601 --event dark=/mnt/datadrive/DATA/CRED2-SCC/dark.fits --event flat=/mnt/datadrive/DATA/CRED2-SCC/flat.fits --event Play
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
